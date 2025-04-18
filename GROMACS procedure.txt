@@ -1,0 +1,32 @@
+wsl
+sudo apt-get install gromacs
+#Settings section(force 1,group SOL)
+gmx pdb2gmx -f 2BOV-G99D -o processed.gro -water spce
+gmx editconf -f processed.gro -o boxed.gro -c -d 1.0 -bt cubic
+gmx solvate -cp boxed.gro -cs spc216.gro -o solvated.gro -p topol.top
+gmx grompp -f ions.mdp -c solvated.gro -p topol.top -o ions.tpr
+gmx genion -s ions.tpr -o solv_ions.gro -p topol.top -pname NA -nname CL -neutral
+#Simulation section ( group SOL)
+gmx grompp -f minim.mdp -c solv_ions.gro -p topol.top -o em.tpr -maxwarn 10
+gmx mdrun -v -deffnm em
+gmx grompp -f nvt.mdp -c em.gro -p topol.top -o nvt.tpr -maxwarn 10
+gmx mdrun -deffnm nvt
+gmx grompp -f npt.mdp -c nvt.gro -p topol.top -o npt.tpr -maxwarn 10
+gmx mdrun -deffnm npt
+gmx grompp -f md.mdp -c npt.gro -p topol.top -o md.tpr -maxwarn 10
+gmx mdrun -deffnm md
+#Analysis Section
+
+gmx trjconv -s md.tpr -f md.xtc -o md_noPBC.xtc -pbc mol -center
+
+# RMSD
+gmx rms -s md.tpr -f md.xtc -o rmsd.xvg -tu ns
+
+# RMSF 
+gmx rmsf -s md.tpr -f md.xtc -o rmsf.xvg -res
+
+# hbond
+gmx hbond -s md.tpr -f md.xtc -num hbond.xvg
+
+#rg
+gmx gyrate -f traj.xtc -s topol.tpr -o radius_of_gyration.xvg
