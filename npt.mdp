@@ -1,0 +1,44 @@
+; NPT平衡模拟参数 - 等温等压系综
+; 基本参数
+title                   = NPT Equilibrium  ; 模拟标题
+integrator              = md               ; 分子动力学积分器
+dt                      = 0.002            ; 步长 (ps) [通常用2 fs]
+nsteps                  = 50000            ; 总步数 (50000*0.002=100 ps)
+nstxout                 = 0                ; 不输出轨迹（平衡阶段可省略）
+nstvout                 = 0
+nstfout                 = 0
+nstenergy               = 1000             ; 每1000步保存能量
+nstlog                  = 1000             ; 每1000步输出日志
+nstxout-compressed      = 5000             ; 每5000步输出压缩轨迹（可选）
+
+; 温度耦合 (Berendsen/v-rescale)
+tcoupl                  = v-rescale        ; 温度耦合方法
+tc-grps                 = Protein Non-Protein  ; 耦合分组
+tau_t                   = 0.1   0.1        ; 耦合时间常数 (ps)
+ref_t                   = 300   300        ; 参考温度 (K)
+
+; 压力耦合 (Parrinello-Rahman/Berendsen)
+pcoupl                  = Parrinello-Rahman  ; 压力耦合方法
+pcoupltype              = isotropic       ; 各向同性压力
+tau_p                   = 2.0             ; 压力弛豫时间 (ps)
+ref_p                   = 1.0             ; 参考压力 (bar)
+compressibility         = 4.5e-5          ; 等温压缩率 (水: 4.5e-5 bar⁻¹)
+
+; 截断和邻居列表
+cutoff-scheme           = Verlet          ; Verlet截断方案
+rlist                   = 1.0             ; 邻居列表截断半径 (nm)
+rcoulomb                = 1.0             ; 库仑截断半径 (nm)
+rvdw                    = 1.0             ; 范德华截断半径 (nm)
+
+; 长程静电
+coulombtype             = PME             ; 粒子网格Ewald方法
+pme_order               = 4               ; PME插值阶数
+fourierspacing          = 0.12            ; FFT网格间距 (nm)
+
+; 约束算法
+constraints             = h-bonds         ; 约束所有氢键
+constraint_algorithm    = LINCS           ; LINCS算法
+continuation            = yes             ; 继续前一步模拟（如从NVT到NPT）
+
+; 能量监控
+energygrps              = Protein SOL ; 能量分组输出

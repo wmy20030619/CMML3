@@ -1,0 +1,32 @@
+; ions.mdp - 用于离子中和的参数文件
+; 基本参数
+integrator              = steep     ; 使用最陡下降法能量最小化
+emtol                   = 100.0     ; 收敛容限（力<100 kJ/mol/nm）
+emstep                  = 0.01      ; 初始步长（nm）
+nsteps                  = 50000     ; 最大步数（通常足够）
+nstlist                 = 10        ; 邻居列表更新频率
+
+; 输出控制
+nstxout                 = 0         ; 不输出轨迹（离子中和无需轨迹）
+nstvout                 = 0
+nstfout                 = 0
+nstlog                  = 1000      ; 每1000步输出日志
+nstenergy               = 1000      ; 每1000步保存能量
+
+; 相互作用参数
+cutoff-scheme           = Verlet    ; 使用Verlet截断
+vdwtype                 = Cut-off
+rlist                   = 1.0       ; 邻居列表截断半径（nm）
+rcoulomb                = 1.0       ; 库仑截断半径（nm）
+rvdw                    = 1.0       ; 范德华截断半径（nm）
+
+; 温度耦合（离子中和通常不需要）
+tcoupl                  = no        ; 禁用温度耦合
+
+; 约束算法
+constraints             = none      ; 不约束键长（水分子可自由移动）
+
+; 静电处理
+coulombtype             = PME       ; 粒子网格Ewald方法
+pme_order               = 4         ; PME插值阶数
+fourierspacing          = 0.12      ; FFT网格间距（nm）
